@@ -3,6 +3,7 @@
 		<label>Warehouse origem:</label>
 		<select id="selectOrigin" name="selectOrigin" ng-model="transfer.originWarehouse">
       		<option ng-repeat="item in warehouses">{{item.label}}</option>
+      		<option value="" selected>-- choose an option --</option>
     	</select>
 	</div>
 
