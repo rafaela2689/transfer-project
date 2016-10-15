@@ -1,0 +1,75 @@
+<div>
+	<div>
+		<label>Warehouse origem:</label>
+		<select id="selectOrigin" name="selectOrigin" ng-model="transfer.originWarehouse">
+      		<option ng-repeat="item in warehouses">{{item.label}}</option>
+    	</select>
+	</div>
+
+	<div ng-show="transfer.originWarehouse">
+		<label>Pallet code:</label>
+		<input ng-model="transfer.pallet">
+		<button ng-click="addPallet()">Add</button>
+	</div>
+	
+	<div ng-show="transfer.pallets.length > 0">
+		<!-- <button ng-click="showHidePallets()">{{showPallets ? 'Hide pallets' : 'Show pallets'}}</button> -->
+	</div>
+	<div ng-show="showPallets">
+		<label>Pallets to add:</label>
+		<ul ng-repeat="pallet in transfer.pallets">
+			<!-- <input name="wifiSecurity" type="radio"/> -->
+			<li ng-bind="pallet">&nbsp;</li>
+		</ul>
+	</div>
+
+	<div ng-show="transfer.originWarehouse">
+		<label>Master code:</label>
+		<input ng-model="transfer.master">
+		<button ng-click="addMaster()">Add</button>
+	</div>
+
+	<div>
+		<label>Masters to add:</label>
+		<ul ng-repeat="master in transfer.masters">
+			<!-- <input name="wifiSecurity" type="radio"/> -->
+			<li ng-bind="master">&nbsp;</li>
+		</ul>
+	</div>
+
+	<div ng-show="transfer.originWarehouse">
+		<label>IMEI:</label>
+		<input ng-model="transfer.imei">
+		<button ng-click="addImei()">Add</button>
+	</div>
+
+	<div>
+		<label>IMEIs to add:</label>
+		<ul ng-repeat="imei in transfer.imeis">
+			<!-- <input name="wifiSecurity" type="radio"/> -->
+			<li ng-bind="imei">&nbsp;</li>
+		</ul>
+	</div>
+</div>
+<div>
+	<div>
+		<label>Warehouse destino:</label>
+		<select name="selectDestiny">
+      		<option value="option-1">Warehouse 1</option>
+      		<option value="option-2">Warehouse 2</option>
+    	</select>
+	</div>
+	<div>
+		<span>Limite de transferência: 1000</span>
+	</div>
+	<div>
+		<label>Transportadora:</label>
+		<select name="selectTransporter">
+			<option value="option-1">Transporter 1</option>
+      		<option value="option-2">Transporter 2</option>
+		</select>
+	</div>
+</div>
+<div>
+	<button>Transferir</button>
+</div>
