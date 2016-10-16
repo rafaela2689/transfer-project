@@ -8,7 +8,10 @@
  * Controller of the transferProjectNgApp
  */
 angular.module('transferApp')
-	.controller('TransferenciaCtrl', function($scope, TransferenciaService) {
+	.controller('TransferenciaCtrl', function($scope, $filter, TransferenciaService) {
+		$scope.isPalletValid = true;
+		$scope.isMasterValid = true;
+		$scope.isImeiValid = true;
 
 		var getWarehouses = function() {
 			var promise = TransferenciaService.getWarehouses();
@@ -55,12 +58,136 @@ angular.module('transferApp')
 			});
 		};
 
-		$scope.transfer = {
-			originWarehouse: '',
-			pallets: [],
-			masters: [],
-			imeis: []
+		var getWarehouseLimits = function () {
+			var promise = TransferenciaService.getWarehouseLimits();
+			promise.then(function(data) {
+				$scope.warehouseLimits = data;
+			}, function(reason) {
+				console.log('Error: ' + reason);
+			});
 		};
+
+		$scope.transfer = {
+			originWarehouse : {
+				id: '',
+				label: ''
+			},
+			destinyWarehouse : {
+				id: '',
+				label: ''
+			},
+			transporter : {
+				id: '',
+				label: ''
+			},
+			pallets : [],
+			masters : [],
+			imeis : []
+		};
+
+		$scope.addPallet = function () {
+			$scope.palletExists = false;
+			var found = false;
+
+			angular.forEach($scope.transfer.pallets, function (p) {
+				if (p.code === $scope.transfer.pallet) {
+					$scope.palletExists = true;
+				}
+			});
+
+			if (!$scope.palletExists) {
+				angular.forEach($scope.pallets, function (p) {
+	    		if (p.code === $scope.transfer.pallet && p.status_id == 1) {
+	    			$scope.transfer.pallets.push(p);
+	    			found = true;
+	    		}
+	    	});
+			}
+
+    	if (found || $scope.palletExists) {
+    		$scope.isPalletValid = true;
+    	} else {
+    		$scope.isPalletValid = false;
+    	}
+		};
+
+		$scope.addMaster = function () {
+			$scope.masterExists = false;
+			var found = false;
+
+			angular.forEach($scope.transfer.masters, function (p) {
+				if (p.code === $scope.transfer.master) {
+					$scope.masterExists = true;
+				}
+			});
+
+			if (!$scope.masterExists) {
+				angular.forEach($scope.masters, function (p) {
+	    		if (p.code === $scope.transfer.master && p.status_id == 1) {
+	    			$scope.transfer.masters.push(p);
+	    			found = true;
+	    		}
+	    	});
+			}
+
+    	if (found || $scope.masterExists) {
+    		$scope.isMasterValid = true;
+    	} else {
+    		$scope.isMasterValid = false;
+    	}
+		};
+
+		$scope.addImei = function () {
+			$scope.imeiExists = false;
+			var found = false;
+
+			angular.forEach($scope.transfer.imeis, function (p) {
+				if (p.code === $scope.transfer.imei) {
+					$scope.imeiExists = true;
+				}
+			});
+
+			if (!$scope.imeiExists) {
+				angular.forEach($scope.imeis, function (p) {
+	    		if (p.code === $scope.transfer.imei && p.status_id == 1) {
+	    			$scope.transfer.imeis.push(p);
+	    			found = true;
+	    		}
+	    	});
+			}
+
+    	if (found || $scope.imeiExists) {
+    		$scope.isImeiValid = true;
+    	} else {
+    		$scope.isImeiValid = false;
+    	}
+		};
+
+		$scope.showHidePallets = function () {
+    	if (!$scope.showPallets) {
+    		$scope.showPallets = true;
+    	} else {
+    		$scope.showPallets = false;
+    	}
+    };
+
+    $scope.setLimit = function () {
+    	var limit = $filter('filter')($scope.warehouseLimits, {warehouse_origin_id : $scope.transfer.originWarehouse.id, warehouse_target_id : $scope.transfer.destinyWarehouse.id}, true);
+    	$scope.warehouseLimit = limit[0];
+    };
+
+    $scope.transferir = function () {
+    	var transferData = {
+    		transporter_id : $scope.transfer.transporter.id,
+    		warehouse_origin_id : $scope.transfer.originWarehouse.id,
+    		warehouse_target_id : $scope.transfer.destinyWarehouse.id,
+    		qte_pallets : $scope.transfer.pallets.length,
+    		qte_master : $scope.transfer.masters.length,
+    		qte_imei : $scope.transfer.imeis.length
+    	};
+
+    	TransferenciaService.doTransfer(transferData, $scope.transfer.pallets, $scope.transfer.masters, $scope.transfer.imeis);
+    };
 
 		$scope.init = function() {
 			getWarehouses();
@@ -68,6 +195,7 @@ angular.module('transferApp')
 			getMasters();
 			getImeis();
 			getTransporters();
+			getWarehouseLimits();
 		};
 
 		$scope.init();

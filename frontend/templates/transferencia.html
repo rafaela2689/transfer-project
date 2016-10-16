@@ -1,8 +1,8 @@
 <div>
 	<div>
 		<label>Warehouse origem:</label>
-		<select id="selectOrigin" name="selectOrigin" ng-model="transfer.originWarehouse">
-      		<option ng-repeat="item in warehouses">{{item.label}}</option>
+		<select id="selectOrigin" name="selectOrigin" ng-model="transfer.originWarehouse" ng-options="item.label for item in warehouses">
+      		<!-- <option ng-repeat="item in warehouses">{{item.label}}</option> -->
       		<option value="" selected>-- choose an option --</option>
     	</select>
 	</div>
@@ -10,17 +10,20 @@
 	<div ng-show="transfer.originWarehouse">
 		<label>Pallet code:</label>
 		<input ng-model="transfer.pallet">
+		<small ng-show="palletExists">Pallet code already inserted.</small>
+		<small ng-show="!isPalletValid">Invalid pallet code.</small>
 		<button ng-click="addPallet()">Add</button>
 	</div>
 	
 	<div ng-show="transfer.pallets.length > 0">
-		<!-- <button ng-click="showHidePallets()">{{showPallets ? 'Hide pallets' : 'Show pallets'}}</button> -->
+		<button ng-show="!showPallets" ng-click="showHidePallets()">Show pallets</button>
+		<button ng-show="showPallets" ng-click="showHidePallets()">Hide pallets</button>
 	</div>
 	<div ng-show="showPallets">
 		<label>Pallets to add:</label>
 		<ul ng-repeat="pallet in transfer.pallets">
 			<!-- <input name="wifiSecurity" type="radio"/> -->
-			<li ng-bind="pallet">&nbsp;</li>
+			<li ng-bind="pallet.code">&nbsp;</li>
 		</ul>
 	</div>
 
@@ -55,22 +58,22 @@
 <div>
 	<div>
 		<label>Warehouse destino:</label>
-		<select name="selectDestiny">
-      		<option value="option-1">Warehouse 1</option>
-      		<option value="option-2">Warehouse 2</option>
+		<select id="selectDestiny" name="selectDestiny" ng-model="transfer.destinyWarehouse" ng-change="setLimit()" ng-options="item.label for item in warehouses">
+      		<!-- <option ng-repeat="item in warehouses">{{item.label}}</option> -->
+      		<option value="">-- choose an option --</option>
     	</select>
 	</div>
 	<div>
-		<span>Limite de transferência: 1000</span>
+		<span ng-show="warehouseLimit">Limite de transferência: {{ warehouseLimit.limit }}</span>
 	</div>
 	<div>
 		<label>Transportadora:</label>
-		<select name="selectTransporter">
-			<option value="option-1">Transporter 1</option>
-      		<option value="option-2">Transporter 2</option>
-		</select>
+		<select id="selectTransporter" name="selectTransporter" ng-model="transfer.transporter" ng-options="item.label for item in transporters">
+      		<!-- <option ng-repeat="item in transporters">{{item.label}}</option> -->
+      		<option value="" selected>-- choose an option --</option>
+    	</select>
 	</div>
 </div>
 <div>
-	<button>Transferir</button>
+	<button ng-click="transferir()">Transferir</button>
 </div>
