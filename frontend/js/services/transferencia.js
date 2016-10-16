@@ -90,6 +90,9 @@ angular.module('transferApp')
 							pallet_id : p.id,
 							transfer_id : data.id
 						});
+						p.status_id = 2;
+						p.warehouse_destiny = dataTransfer.warehouse_target_id;
+						$http.put('api/pallets/'+parseInt(p.id), p);
 					});
 					angular.forEach(palletsInsert, function(pallet) {
 						$http.post('api/transfer-pallets', pallet);
@@ -99,6 +102,9 @@ angular.module('transferApp')
 							master_id : m.id,
 							transfer_id : data.id
 						});
+						m.status_id = 2;
+						m.warehouse_destiny = dataTransfer.warehouse_target_id;
+						$http.put('api/masters/'+parseInt(m.id), m);
 					});
 					angular.forEach(mastersInsert, function(master) {
 						$http.post('api/transfer-masters', master);
@@ -109,12 +115,15 @@ angular.module('transferApp')
 							imei_id : i.id,
 							transfer_id : data.id
 						});
+						i.status_id = 2;
+						i.warehouse_destiny = dataTransfer.warehouse_target_id;
+						$http.put('api/imeis/'+parseInt(i.id), i);
 					});
 					angular.forEach(imeisInsert, function(imei) {
 						$http.post('api/transfer-imeis', imei);
 					});
 				}).error(function () {
-					
+
 				});
 			}
 

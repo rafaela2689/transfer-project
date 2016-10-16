@@ -80,6 +80,16 @@ angular.module('transferApp')
 				id: '',
 				label: ''
 			},
+			pallet : {
+				id: '',
+				code: '',
+				status_id: ''
+			},
+			master : {
+				id: '',
+				code: '',
+				status_id: ''
+			},
 			pallets : [],
 			masters : [],
 			imeis : []
@@ -90,24 +100,41 @@ angular.module('transferApp')
 			var found = false;
 
 			angular.forEach($scope.transfer.pallets, function (p) {
-				if (p.code === $scope.transfer.pallet) {
+				if (p.code === $scope.transfer.pallet.code) {
+					$scope.transfer.pallet.id = p.id;
 					$scope.palletExists = true;
 				}
 			});
 
 			if (!$scope.palletExists) {
 				angular.forEach($scope.pallets, function (p) {
-	    		if (p.code === $scope.transfer.pallet && p.status_id == 1) {
+	    		if (p.code === $scope.transfer.pallet.code && p.status_id == 1) {
+	    			$scope.transfer.pallet.id = p.id;
 	    			$scope.transfer.pallets.push(p);
 	    			found = true;
 	    		}
 	    	});
 			}
 
-    	if (found || $scope.palletExists) {
+    	if (found) {
+    		var masters = $filter('filter')($scope.masters, { pallet_id : $scope.transfer.pallet.id , status_id : 1 }, true);
+    		$scope.transfer.masters = masters;
+    		angular.forEach($scope.transfer.masters, function (m) {
+    			var imeis = $filter('filter')($scope.imeis, { master_id : m.id , status_id : 1 }, true);
+    			$scope.transfer.imeis = imeis;
+    		});
     		$scope.isPalletValid = true;
+    		$scope.transfer.pallet = {
+    			id: '',
+					code: '',
+					status_id: ''
+				};
     	} else {
     		$scope.isPalletValid = false;
+    	}
+
+    	if ($scope.palletExists) {
+    		$scope.isPalletValid = true;
     	}
 		};
 
@@ -116,24 +143,37 @@ angular.module('transferApp')
 			var found = false;
 
 			angular.forEach($scope.transfer.masters, function (p) {
-				if (p.code === $scope.transfer.master) {
+				if (p.code === $scope.transfer.master.code) {
+					$scope.transfer.master.id = p.id;
 					$scope.masterExists = true;
 				}
 			});
 
 			if (!$scope.masterExists) {
 				angular.forEach($scope.masters, function (p) {
-	    		if (p.code === $scope.transfer.master && p.status_id == 1) {
+	    		if (p.code === $scope.transfer.master.code && p.status_id == 1) {
+	    			$scope.transfer.master.id = p.id;
 	    			$scope.transfer.masters.push(p);
 	    			found = true;
 	    		}
 	    	});
 			}
 
-    	if (found || $scope.masterExists) {
+    	if (found) {
+    		var imeis = $filter('filter')($scope.imeis, { master_id : $scope.transfer.master.id , status_id : 1 }, true);
+    		$scope.transfer.imeis = imeis;
     		$scope.isMasterValid = true;
+    		$scope.transfer.master = {
+    			id: '',
+					code: '',
+					status_id: ''
+				};
     	} else {
     		$scope.isMasterValid = false;
+    	}
+
+    	if ($scope.masterExists) {
+    		$scope.isMasterValid = true;	
     	}
 		};
 
@@ -142,7 +182,8 @@ angular.module('transferApp')
 			var found = false;
 
 			angular.forEach($scope.transfer.imeis, function (p) {
-				if (p.code === $scope.transfer.imei) {
+				if (p.code === $scope.transfer.imei.code) {
+					$scope.transfer.imei.id = p.id;
 					$scope.imeiExists = true;
 				}
 			});
@@ -150,16 +191,26 @@ angular.module('transferApp')
 			if (!$scope.imeiExists) {
 				angular.forEach($scope.imeis, function (p) {
 	    		if (p.code === $scope.transfer.imei && p.status_id == 1) {
+	    			$scope.transfer.imei.id = p.id;
 	    			$scope.transfer.imeis.push(p);
 	    			found = true;
 	    		}
 	    	});
 			}
 
-    	if (found || $scope.imeiExists) {
+    	if (found) {
     		$scope.isImeiValid = true;
+    		$scope.transfer.imei = {
+    			id: '',
+					code: '',
+					status_id: ''
+				};
     	} else {
     		$scope.isImeiValid = false;
+    	}
+
+    	if ($scope.imeiExists) {
+    		$scope.isImeiValid = true;	
     	}
 		};
 
@@ -187,6 +238,18 @@ angular.module('transferApp')
     	};
 
     	TransferenciaService.doTransfer(transferData, $scope.transfer.pallets, $scope.transfer.masters, $scope.transfer.imeis);
+    };
+
+    $scope.removePallet = function ($index) {
+    	$scope.transfer.pallets.splice($index, 1);
+    };
+
+    $scope.removeMaster = function ($index) {
+    	$scope.transfer.masters.splice($index, 1);
+    };
+
+    $scope.removeImei = function ($index) {
+    	$scope.transfer.imeis.splice($index, 1);
     };
 
 		$scope.init = function() {

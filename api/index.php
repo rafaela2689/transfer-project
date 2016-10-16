@@ -14,6 +14,9 @@ $app->post('/transfer', 'doTransfer');
 $app->post('/transfer-pallets', 'addTransferPallet');
 $app->post('/transfer-masters', 'addTransferMaster');
 $app->post('/transfer-imeis', 'addTransferImei');
+$app->put('/pallets/:id', 'updatePallet');
+$app->put('/masters/:id', 'updateMaster');
+$app->put('/imeis/:id', 'updateImei');
 
 $app->run();
 
@@ -170,6 +173,60 @@ function addTransferImei() {
 		$db = null;
 		echo json_encode(array( "id" => $transferImei->id));
 		// echo json_encode($transfer); 
+	} catch(PDOException $e) {
+		echo '{"error":{"text":'. $e->getMessage() .'}}'; 
+	}
+}
+
+function updatePallet($id) {
+	$request = \Slim\Slim::getInstance()->request();
+	$pallet = json_decode($request->getBody());
+	$sql = "UPDATE pallet SET status_id=:status_id, warehouse_destiny=:warehouse_destiny WHERE id=:id";
+	try {
+		$db = getConnection();
+		$stmt = $db->prepare($sql);  
+		$stmt->bindParam("status_id", $pallet->status_id);
+		$stmt->bindParam("warehouse_destiny", $pallet->warehouse_destiny);
+		$stmt->bindParam("id", $id);
+		$stmt->execute();
+		$db = null;
+		echo json_encode(array("message" => "updated succesfully")); 
+	} catch(PDOException $e) {
+		echo '{"error":{"text":'. $e->getMessage() .'}}'; 
+	}
+}
+
+function updateMaster($id) {
+	$request = \Slim\Slim::getInstance()->request();
+	$master = json_decode($request->getBody());
+	$sql = "UPDATE master SET status_id=:status_id, warehouse_destiny=:warehouse_destiny WHERE id=:id";
+	try {
+		$db = getConnection();
+		$stmt = $db->prepare($sql);  
+		$stmt->bindParam("status_id", $master->status_id);
+		$stmt->bindParam("warehouse_destiny", $master->warehouse_destiny);
+		$stmt->bindParam("id", $id);
+		$stmt->execute();
+		$db = null;
+		echo json_encode(array("message" => "updated succesfully")); 
+	} catch(PDOException $e) {
+		echo '{"error":{"text":'. $e->getMessage() .'}}'; 
+	}
+}
+
+function updateImei($id) {
+	$request = \Slim\Slim::getInstance()->request();
+	$imei = json_decode($request->getBody());
+	$sql = "UPDATE imei SET status_id=:status_id, warehouse_destiny=:warehouse_destiny WHERE id=:id";
+	try {
+		$db = getConnection();
+		$stmt = $db->prepare($sql);  
+		$stmt->bindParam("status_id", $imei->status_id);
+		$stmt->bindParam("warehouse_destiny", $imei->warehouse_destiny);
+		$stmt->bindParam("id", $id);
+		$stmt->execute();
+		$db = null;
+		echo json_encode(array("message" => "updated succesfully")); 
 	} catch(PDOException $e) {
 		echo '{"error":{"text":'. $e->getMessage() .'}}'; 
 	}

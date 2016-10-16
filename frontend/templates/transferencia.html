@@ -1,79 +1,152 @@
-<div>
-	<div>
-		<label>Warehouse origem:</label>
-		<select id="selectOrigin" name="selectOrigin" ng-model="transfer.originWarehouse" ng-options="item.label for item in warehouses">
-      		<!-- <option ng-repeat="item in warehouses">{{item.label}}</option> -->
-      		<option value="" selected>-- choose an option --</option>
-    	</select>
-	</div>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">Transferencia App</a>
+    </div>
+    <ul class="nav navbar-nav">
+      <li class="active"><a href="#">Home</a></li>
+      <li><a href="#/transferencia">Transferência</a></li>
+      <li><a href="#">Consultar transferências</a></li> 
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+      <li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+      <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+    </ul>
+  </div>
+</nav>
+<div class="container">
+	<form class="form-horizontal">
+		<div class="form-group">
+			<label class="col-md-3 col-lg-2 control-label">Warehouse origem:</label>
+			<div class="col-md-5 col-lg-3">
+				<select class="form-control" id="selectOrigin" name="selectOrigin" ng-model="transfer.originWarehouse" ng-options="item.label for item in warehouses">
+		      		<option value="" selected>-- choose an option --</option>
+		    	</select>
+			</div>
+		</div>
 
-	<div ng-show="transfer.originWarehouse">
-		<label>Pallet code:</label>
-		<input ng-model="transfer.pallet">
-		<small ng-show="palletExists">Pallet code already inserted.</small>
-		<small ng-show="!isPalletValid">Invalid pallet code.</small>
-		<button ng-click="addPallet()">Add</button>
-	</div>
+		<div class="form-group" ng-show="transfer.originWarehouse">
+			<label class="col-md-3 col-lg-2 control-label">Pallet code:</label>
+			<div class="col-md-5 col-lg-2">
+				<input class="form-control" ng-model="transfer.pallet.code">
+				<small ng-show="palletExists">Pallet code already inserted.</small>
+				<small ng-show="!isPalletValid">Invalid pallet code.</small>
+			</div>
+			<div class="col-md-2 col-lg-1">
+				<button type="button" class="btn btn-primary" ng-click="addPallet()">Add</button>
+			</div>
+			<div class="col-md-3 col-lg-2" ng-show="transfer.pallets.length > 0">
+				<button type="button" class="btn btn-primary" ng-show="!showPallets" ng-click="showPallets=!showPallets">Show pallets</button>
+				<button type="button" class="btn btn-primary" ng-show="showPallets" ng-click="showPallets=!showPallets">Hide pallets</button>
+			</div>
+		</div>
+		<div class="form-group" ng-show="showPallets && transfer.pallets.length > 0">
+			<table class="table" style="width:52%">
+				<tr>
+					<th>Pallet Code</th>
+					<th>Remove</th>
+				</tr>
+				<tbody>
+					<tr ng-repeat="pallet in transfer.pallets">
+						<td ng-bind="pallet.code"></td>
+						<td>
+							<button type="button" class="btn btn-default btn-sm" aria-label="Left Align" ng-click="removePallet($index)">
+  								<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+							</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="form-group" ng-show="transfer.originWarehouse">
+			<label class="col-md-3 col-lg-2 control-label">Master code:</label>
+			<div class="col-md-3 col-lg-2">
+				<input class="form-control" ng-model="transfer.master.code">
+			</div>
+			<div class="col-md-2 col-lg-1">
+				<button type="button" class="btn btn-primary" ng-click="addMaster()">Add</button>
+			</div>
+			<div class="col-md-3 col-lg-2" ng-show="transfer.masters.length > 0">
+				<button type="button" class="btn btn-primary" ng-show="!showMasters" ng-click="showMasters=!showMasters">Show masters</button>
+				<button type="button" class="btn btn-primary" ng-show="showMasters" ng-click="showMasters=!showMasters">Hide masters</button>
+			</div>
+		</div>
+		<div class="form-group" ng-show="showMasters && transfer.masters.length > 0">
+			<table class="table" style="width:52%">
+				<tr>
+					<th>Master Code</th>
+					<th>Remove</th>
+				</tr>
+				<tbody>
+					<tr ng-repeat="master in transfer.masters">
+						<td ng-bind="master.code"></td>
+						<td>
+							<button type="button" class="btn btn-default btn-sm" aria-label="Left Align" ng-click="removeMaster($index)">
+  								<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+							</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="form-group" ng-show="transfer.originWarehouse">
+			<label class="col-md-3 col-lg-2 control-label">IMEI:</label>
+			<div class="col-md-3 col-lg-2">
+				<input class="form-control" ng-model="transfer.imei.code">
+			</div>
+			<div class="col-md-2 col-lg-1">
+				<button type="button" class="btn btn-primary" ng-click="addImei()">Add</button>
+			</div>
+			<div class="col-md-3 col-lg-2" ng-show="transfer.imeis.length > 0">
+				<button type="button" class="btn btn-primary" ng-show="!showImeis" ng-click="showImeis=!showImeis">Show IMEIs</button>
+				<button type="button" class="btn btn-primary" ng-show="showImeis" ng-click="showImeis=!showImeis">Hide IMEIs</button>
+			</div>
+		</div>
+		<div class="form-group" ng-show="showImeis && transfer.imeis.length > 0">
+			<table class="table" style="width:52%">
+				<tr>
+					<th>IMEI Code</th>
+					<th>Remove</th>
+				</tr>
+				<tbody>
+					<tr ng-repeat="imei in transfer.imeis">
+						<td ng-bind="imei.code"></td>
+						<td>
+							<button type="button" class="btn btn-default btn-sm" aria-label="Left Align" ng-click="removeImei($index)">
+  								<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+							</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="form-group">
+			<label class="col-md-3 col-lg-2 control-label">Warehouse destino:</label>
+			<div class="col-md-3 col-lg-3">
+				<select class="form-control" id="selectDestiny" name="selectDestiny" ng-model="transfer.destinyWarehouse" ng-change="setLimit()" ng-options="item.label for item in warehouses">
+		      		<option value="">-- choose an option --</option>
+		    	</select>
+			</div>
+		</div>
+		<div class="form-group">
+			<span ng-show="warehouseLimit">Limite de transferência: {{ warehouseLimit.limit }}</span>
+		</div>
+		<div class="form-group">
+			<label class="col-md-3 col-lg-2 control-label">Transportadora:</label>
+			<div class="col-md-3 col-lg-3">
+				<select class="form-control" id="selectTransporter" name="selectTransporter" ng-model="transfer.transporter" ng-options="item.label for item in transporters">
+		      		<option value="" selected>-- choose an option --</option>
+		    	</select>
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-offset-3 col-sm-12">
+				<button type="button" class="btn btn-primary" ng-click="transferir()">Transferir</button>
+			</div>
+		</div>
+	</form>
+</div>
 	
-	<div ng-show="transfer.pallets.length > 0">
-		<button ng-show="!showPallets" ng-click="showHidePallets()">Show pallets</button>
-		<button ng-show="showPallets" ng-click="showHidePallets()">Hide pallets</button>
-	</div>
-	<div ng-show="showPallets">
-		<label>Pallets to add:</label>
-		<ul ng-repeat="pallet in transfer.pallets">
-			<!-- <input name="wifiSecurity" type="radio"/> -->
-			<li ng-bind="pallet.code">&nbsp;</li>
-		</ul>
-	</div>
-
-	<div ng-show="transfer.originWarehouse">
-		<label>Master code:</label>
-		<input ng-model="transfer.master">
-		<button ng-click="addMaster()">Add</button>
-	</div>
-
-	<div>
-		<label>Masters to add:</label>
-		<ul ng-repeat="master in transfer.masters">
-			<!-- <input name="wifiSecurity" type="radio"/> -->
-			<li ng-bind="master">&nbsp;</li>
-		</ul>
-	</div>
-
-	<div ng-show="transfer.originWarehouse">
-		<label>IMEI:</label>
-		<input ng-model="transfer.imei">
-		<button ng-click="addImei()">Add</button>
-	</div>
-
-	<div>
-		<label>IMEIs to add:</label>
-		<ul ng-repeat="imei in transfer.imeis">
-			<!-- <input name="wifiSecurity" type="radio"/> -->
-			<li ng-bind="imei">&nbsp;</li>
-		</ul>
-	</div>
-</div>
-<div>
-	<div>
-		<label>Warehouse destino:</label>
-		<select id="selectDestiny" name="selectDestiny" ng-model="transfer.destinyWarehouse" ng-change="setLimit()" ng-options="item.label for item in warehouses">
-      		<!-- <option ng-repeat="item in warehouses">{{item.label}}</option> -->
-      		<option value="">-- choose an option --</option>
-    	</select>
-	</div>
-	<div>
-		<span ng-show="warehouseLimit">Limite de transferência: {{ warehouseLimit.limit }}</span>
-	</div>
-	<div>
-		<label>Transportadora:</label>
-		<select id="selectTransporter" name="selectTransporter" ng-model="transfer.transporter" ng-options="item.label for item in transporters">
-      		<!-- <option ng-repeat="item in transporters">{{item.label}}</option> -->
-      		<option value="" selected>-- choose an option --</option>
-    	</select>
-	</div>
-</div>
-<div>
-	<button ng-click="transferir()">Transferir</button>
-</div>
