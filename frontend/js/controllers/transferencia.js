@@ -67,32 +67,34 @@ angular.module('transferApp')
 			});
 		};
 
-		$scope.transfer = {
-			originWarehouse : {
-				id: '',
-				label: ''
-			},
-			destinyWarehouse : {
-				id: '',
-				label: ''
-			},
-			transporter : {
-				id: '',
-				label: ''
-			},
-			pallet : {
-				id: '',
-				code: '',
-				status_id: ''
-			},
-			master : {
-				id: '',
-				code: '',
-				status_id: ''
-			},
-			pallets : [],
-			masters : [],
-			imeis : []
+		var createModel = function () {
+			$scope.transfer = {
+				originWarehouse : {
+					id: '',
+					label: ''
+				},
+				destinyWarehouse : {
+					id: '',
+					label: ''
+				},
+				transporter : {
+					id: '',
+					label: ''
+				},
+				pallet : {
+					id: '',
+					code: '',
+					status_id: ''
+				},
+				master : {
+					id: '',
+					code: '',
+					status_id: ''
+				},
+				pallets : [],
+				masters : [],
+				imeis : []
+			};
 		};
 
 		$scope.addPallet = function () {
@@ -223,11 +225,17 @@ angular.module('transferApp')
     };
 
     $scope.setLimit = function () {
-    	var limit = $filter('filter')($scope.warehouseLimits, {warehouse_origin_id : $scope.transfer.originWarehouse.id, warehouse_target_id : $scope.transfer.destinyWarehouse.id}, true);
+    	var limit = $filter('filter')($scope.warehouseLimits, { warehouse_origin_id : $scope.transfer.originWarehouse.id, warehouse_target_id : $scope.transfer.destinyWarehouse.id }, true);
     	$scope.warehouseLimit = limit[0];
     };
 
     $scope.transferir = function () {
+    	if (!$scope.transfer.originWarehouse.label || !$scope.transfer.destinyWarehouse.label || !$scope.transfer.transporter.label) {
+    		return;
+    	}
+
+    	$scope.submitted = true;
+
     	var transferData = {
     		transporter_id : $scope.transfer.transporter.id,
     		warehouse_origin_id : $scope.transfer.originWarehouse.id,
@@ -238,6 +246,7 @@ angular.module('transferApp')
     	};
 
     	TransferenciaService.doTransfer(transferData, $scope.transfer.pallets, $scope.transfer.masters, $scope.transfer.imeis);
+    	createModel();
     };
 
     $scope.removePallet = function ($index) {
@@ -253,6 +262,7 @@ angular.module('transferApp')
     };
 
 		$scope.init = function() {
+			createModel();
 			getWarehouses();
 			getPallets();
 			getMasters();

@@ -15,33 +15,34 @@
   </div>
 </nav>
 <div class="container">
-	<form class="form-horizontal">
+	<form name="formTransfer" class="form-horizontal">
 		<div class="form-group">
 			<label class="col-md-3 col-lg-2 control-label">Warehouse origem:</label>
 			<div class="col-md-5 col-lg-3">
-				<select class="form-control" id="selectOrigin" name="selectOrigin" ng-model="transfer.originWarehouse" ng-options="item.label for item in warehouses">
-		      		<option value="" selected>-- choose an option --</option>
+				<select class="form-control" id="selectOrigin" name="selectOrigin" ng-model="transfer.originWarehouse" required ng-options="item.label for item in warehouses">
+		      		<option value="">-- choose an option --</option>
 		    	</select>
+		    	<small class="error" ng-show="formTransfer.selectOrigin.$dirty && formTransfer.selectOrigin.$error.required">Pallet code already inserted.</small>
 			</div>
 		</div>
 
-		<div class="form-group" ng-show="transfer.originWarehouse">
+		<div class="form-group" ng-class="{ 'has-error' : palletExists || !isPalletValid }" ng-show="transfer.originWarehouse">
 			<label class="col-md-3 col-lg-2 control-label">Pallet code:</label>
 			<div class="col-md-5 col-lg-2">
-				<input class="form-control" ng-model="transfer.pallet.code">
-				<small ng-show="palletExists">Pallet code already inserted.</small>
-				<small ng-show="!isPalletValid">Invalid pallet code.</small>
+				<input type="text" class="form-control" ng-model="transfer.pallet.code">
+				<small class="error" ng-show="palletExists">Pallet code already inserted.</small>
+				<small class="error" ng-show="!isPalletValid">Invalid pallet code.</small>
 			</div>
 			<div class="col-md-2 col-lg-1">
 				<button type="button" class="btn btn-primary" ng-click="addPallet()">Add</button>
 			</div>
-			<div class="col-md-3 col-lg-2" ng-show="transfer.pallets.length > 0">
+			<div class="col-md-3 col-lg-2" ng-show="pallets.length > 0">
 				<button type="button" class="btn btn-primary" ng-show="!showPallets" ng-click="showPallets=!showPallets">Show pallets</button>
 				<button type="button" class="btn btn-primary" ng-show="showPallets" ng-click="showPallets=!showPallets">Hide pallets</button>
 			</div>
 		</div>
 		<div class="form-group" ng-show="showPallets && transfer.pallets.length > 0">
-			<table class="table" style="width:52%">
+			<table class="table" style="width:50%">
 				<tr>
 					<th>Pallet Code</th>
 					<th>Remove</th>
@@ -59,10 +60,12 @@
 			</table>
 		</div>
 
-		<div class="form-group" ng-show="transfer.originWarehouse">
+		<div class="form-group" ng-class="{ 'has-error' : masterExists || !isMasterValid }" ng-show="transfer.originWarehouse">
 			<label class="col-md-3 col-lg-2 control-label">Master code:</label>
 			<div class="col-md-3 col-lg-2">
-				<input class="form-control" ng-model="transfer.master.code">
+				<input type="text" class="form-control" ng-model="transfer.master.code">
+				<small class="error" ng-show="masterExists">Master code already inserted.</small>
+				<small class="error" ng-show="!isMasterValid">Invalid master code.</small>
 			</div>
 			<div class="col-md-2 col-lg-1">
 				<button type="button" class="btn btn-primary" ng-click="addMaster()">Add</button>
@@ -91,10 +94,12 @@
 			</table>
 		</div>
 
-		<div class="form-group" ng-show="transfer.originWarehouse">
+		<div class="form-group" ng-class="{ 'has-error' : imeiExists || !isImeiValid }" ng-show="transfer.originWarehouse">
 			<label class="col-md-3 col-lg-2 control-label">IMEI:</label>
 			<div class="col-md-3 col-lg-2">
-				<input class="form-control" ng-model="transfer.imei.code">
+				<input type="text" class="form-control" ng-model="transfer.imei.code">
+				<small class="error" ng-show="imeiExists">Master code already inserted.</small>
+				<small class="error" ng-show="!isImeiValid">Invalid master code.</small>
 			</div>
 			<div class="col-md-2 col-lg-1">
 				<button type="button" class="btn btn-primary" ng-click="addImei()">Add</button>
@@ -126,25 +131,28 @@
 		<div class="form-group">
 			<label class="col-md-3 col-lg-2 control-label">Warehouse destino:</label>
 			<div class="col-md-3 col-lg-3">
-				<select class="form-control" id="selectDestiny" name="selectDestiny" ng-model="transfer.destinyWarehouse" ng-change="setLimit()" ng-options="item.label for item in warehouses">
+				<select class="form-control" id="selectDestiny" name="selectDestiny" ng-model="transfer.destinyWarehouse" ng-change="setLimit()" ng-options="item.label for item in warehouses" required>
 		      		<option value="">-- choose an option --</option>
 		    	</select>
 			</div>
 		</div>
-		<div class="form-group">
-			<span ng-show="warehouseLimit">Limite de transferência: {{ warehouseLimit.limit }}</span>
+		<div class="form-group" ng-show="warehouseLimit">
+			<label class="col-md-3 col-lg-2 control-label">Limite de transferência:</label>
+			<div class="col-md-5 col-lg-3">
+				<label class="form-control-static" ng-bind="warehouseLimit.limit"></label>
+			</div>
 		</div>
 		<div class="form-group">
 			<label class="col-md-3 col-lg-2 control-label">Transportadora:</label>
 			<div class="col-md-3 col-lg-3">
-				<select class="form-control" id="selectTransporter" name="selectTransporter" ng-model="transfer.transporter" ng-options="item.label for item in transporters">
+				<select class="form-control" id="selectTransporter" name="selectTransporter" ng-model="transfer.transporter" ng-options="item.label for item in transporters" required>
 		      		<option value="" selected>-- choose an option --</option>
 		    	</select>
 			</div>
 		</div>
 		<div class="form-group">
 			<div class="col-sm-offset-3 col-sm-12">
-				<button type="button" class="btn btn-primary" ng-click="transferir()">Transferir</button>
+				<button type="button" class="btn btn-primary" ng-disabled="formTransfer.$invalid" ng-click="transferir()">Transferir</button>
 			</div>
 		</div>
 	</form>
