@@ -261,15 +261,55 @@ angular.module('transferApp')
     	$scope.transfer.imeis.splice($index, 1);
     };
 
-		$scope.init = function() {
-			createModel();
-			getWarehouses();
-			getPallets();
-			getMasters();
-			getImeis();
-			getTransporters();
-			getWarehouseLimits();
-		};
+    $scope.getWarehousesTarget = function () {
+    	var warehousesTargets = [];
+    	angular.forEach($scope.warehouses, function(w) {
+    		if (w.id !== $scope.transfer.originWarehouse.id) {
+    			warehousesTargets.push(w);
+    		}
+    	});
 
-		$scope.init();
-	});
+    	return warehousesTargets;
+    };
+
+    $scope.getWarehousesOrigin = function () {
+    	var warehousesOrigin = [];
+    	angular.forEach($scope.warehouses, function(w) {
+    		if (w.id !== $scope.transfer.destinyWarehouse.id) {
+    			warehousesOrigin.push(w);
+    		}
+    	});
+
+    	return warehousesOrigin;
+    };
+
+    $scope.selectPallets = function () {
+    	for (var i = 0; i < $scope.pallets.length; i++) {
+    		if ($scope.pallets[i].checked) {
+    			$scope.transfer.pallets.push($scope.pallets[i]);
+    			$scope.pallets.splice(i, 1);
+    		}
+    	};
+    };
+
+    $scope.unselectPallets = function () {
+    	for (var i = 0; i < $scope.transfer.pallets.length; i++) {
+    		if ($scope.transfer.pallets[i].checked) {
+    			$scope.pallets.push($scope.transfer.pallets[i]);
+    			$scope.transfer.pallets.splice(i, 1);
+    		}
+    	};
+    };
+
+	$scope.init = function() {
+		createModel();
+		getWarehouses();
+		getPallets();
+		getMasters();
+		getImeis();
+		getTransporters();
+		getWarehouseLimits();
+	};
+
+	$scope.init();
+});

@@ -1,6 +1,6 @@
 <?php
 
-require 'vendor/autoload.php';
+require "../vendor/autoload.php";
 $app = new \Slim\Slim();
 $app->response()->header('Content-Type', 'application/json;charset=utf-8');
 
@@ -17,6 +17,10 @@ $app->post('/transfer-imeis', 'addTransferImei');
 $app->put('/pallets/:id', 'updatePallet');
 $app->put('/masters/:id', 'updateMaster');
 $app->put('/imeis/:id', 'updateImei');
+$app->get('/transfers', 'getTransferencias');
+$app->get('/transfer-pallets', 'getTransferPallets');
+$app->get('/transfer-masters', 'getTransferMasters');
+$app->get('/transfer-imeis', 'getTransferImeis');
 
 $app->run();
 
@@ -29,7 +33,7 @@ function getWarehouses() {
 		$db = null;
 		echo json_encode($warehouses);
 	} catch(PDOException $e) {
-		echo '{"error":{"text":'. $e->getMessage() .'}}'; 
+		echo json_encode(array("error" => $e->getMessage() ));
 	}
 }
 
@@ -232,13 +236,76 @@ function updateImei($id) {
 	}
 }
 
+function getTransferencias() {
+	$sql = "SELECT  t.id, t.transporter_id, tr.label as t_label, t.warehouse_origin_id, wo.label as worigin_label, t.warehouse_target_id, wt.label as wtarget_label
+		from transfer as t
+		INNER JOIN warehouse wo ON wo.id = t.warehouse_origin_id
+        INNER JOIN warehouse wt ON wt.id = t.warehouse_target_id
+		INNER JOIN transporter tr ON tr.id = t.transporter_id";
+	try {
+		$db = getConnection();
+		$stmt = $db->query($sql);  
+		$transfers = $stmt->fetchAll(PDO::FETCH_OBJ);
+		$db = null;
+		echo json_encode($transfers);
+	} catch(PDOException $e) {
+		echo json_encode(array("error" => $e->getMessage()));
+	}
+}
+
+function getTransferPallets() {
+	$sql = "SELECT  tp.id, tp.transfer_id, tp.pallet_id, p.code
+		from transfer_pallet as tp
+		INNER JOIN pallet p ON p.id = tp.pallet_id";
+	try {
+		$db = getConnection();
+		$stmt = $db->query($sql);  
+		$transferPallets = $stmt->fetchAll(PDO::FETCH_OBJ);
+		$db = null;
+		echo json_encode($transferPallets);
+	} catch(PDOException $e) {
+		echo json_encode(array("error" => $e->getMessage()));
+	}
+}
+
+function getTransferMasters() {
+	$sql = "SELECT  tm.id, tm.transfer_id, tm.master_id, m.code
+		from transfer_master as tm
+		INNER JOIN master m ON m.id = tm.pallet_id";
+	try {
+		$db = getConnection();
+		$stmt = $db->query($sql);  
+		$transferMasters = $stmt->fetchAll(PDO::FETCH_OBJ);
+		$db = null;
+		echo json_encode($transferMasters);
+	} catch(PDOException $e) {
+		echo json_encode(array("error" => $e->getMessage()));
+	}
+}
+
+function getTransferImeis() {
+	$sql = "SELECT  ti.id, ti.transfer_id, ti.imei_id, i.code
+		from transfer_imei as ti
+		INNER JOIN imei i ON i.id = ti.imei_id";
+	try {
+		$db = getConnection();
+		$stmt = $db->query($sql);  
+		$transferImeis = $stmt->fetchAll(PDO::FETCH_OBJ);
+		$db = null;
+		echo json_encode($transferImeis);
+	} catch(PDOException $e) {
+		echo json_encode(array("error" => $e->getMessage()));
+	}
+}
+
 function getConnection() {
-	$dbhost="127.0.0.1";
-	$dbuser="root";
-	$dbpass="";
-	$dbname="warehouse_transfer";
-	$dbh = new PDO("mysql:host=localhost;dbname=warehouse_transfer", "root", "root",
-		array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));	
+	$url = parse_url(getenv("CLEARDB_DATABASE_URL"));
+	$dbhost=$url["host"];
+	$dbuser=$url["user"];
+	$dbpass=$url["pass"];
+	$dbname=substr($url["path"], 1);
+	$dbh = new PDO('mysql:host='.$dbhost.';dbname='.$dbname, $dbuser, $dbpass,
+		array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
 	$dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	return $dbh;
 }

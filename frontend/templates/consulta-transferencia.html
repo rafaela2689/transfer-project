@@ -15,7 +15,21 @@
   </div>
 </nav>
 <div>
-	<h1>Bem vindo ao gerenciamento de tranferências</h1>
-	<a class="btn btn-primary" href="#/transferencia">Iniciar transferência</a>
-	<a class="btn btn-primary" href="">Visualizar transferências</a>
+	<h3>Transferências realizadas</h3>
+	<table class="table">
+		<tr>
+			<th>Transferência</th>
+			<th>Warehouse origin</th>
+			<th>Warehouse target</th>
+			<th>Transporter</th>
+		</tr>
+		<tbody>
+			<tr ng-repeat="transfer in transfers">
+				<td ng-bind="transfer.id"></td>
+				<td ng-bind="transfer.worigin_label"></td>
+				<td ng-bind="transfer.wtarget_label"></td>
+				<td ng-bind="transfer.t_label"></td>
+			</tr>
+		</tbody>
+	</table>
 </div>

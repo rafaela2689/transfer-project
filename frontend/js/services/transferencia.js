@@ -17,8 +17,8 @@ angular.module('transferApp')
 				var deferred = $q.defer();
 				$http.get('api/warehouses').success(function(data) {
 					deferred.resolve(data);
-				}).error(function() {
-					deferred.reject('something wrong');
+				}).error(function(e) {
+					deferred.reject(e.error);
 				});
 
 				return deferred.promise;
@@ -125,6 +125,45 @@ angular.module('transferApp')
 				}).error(function () {
 
 				});
+			},
+
+			getTransfers : function() {
+				var deferred = $q.defer();
+				$http.get('api/transfers').success(function(data) {
+					deferred.resolve(data);
+				}).error(function(e) {
+					deferred.reject({ 'error' : e.error });
+				});
+				return deferred.promise;
+			},
+
+			getTransferPallets : function() {
+				var deferred = $q.defer();
+				$http.get('api/transfer-pallets').success(function(data) {
+					deferred.resolve(data);
+				}).error(function(e) {
+					deferred.reject({ 'error' : e.error });
+				});
+				return deferred.promise;
+			},
+
+			getTransferMasters : function() {
+				var deferred = $q.defer();
+				$http.get('api/transfer-masters').success(function(data) {
+					deferred.resolve(data);
+				}).error(function(e) {
+					deferred.reject({ 'error' : e.error });
+				});
+				return deferred.promise;
+			},
+			getTransferImeis : function() {
+				var deferred = $q.defer();
+				$http.get('api/transfer-imeis').success(function(data) {
+					deferred.resolve(data);
+				}).error(function(e) {
+					deferred.reject({ 'error' : e.error });
+				});
+				return deferred.promise;
 			}
 
 		};

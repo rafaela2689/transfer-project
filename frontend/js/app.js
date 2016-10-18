@@ -8,5 +8,9 @@ angular.module('transferApp', []).
         templateUrl: 'frontend/templates/transferencia.html',
         controller: 'TransferenciaCtrl'
       }).
+      when('/consulta-transferencia', {
+        templateUrl: 'frontend/templates/consulta-transferencia.html',
+        controller: 'ConsultaTransferCtrl'
+      }).
       otherwise({redirectTo: '/'});
 }]);
